@@ -1,0 +1,34 @@
+{
+  "name": "Common Responses",
+  "description": "Save common responses and insert them into various form fields",
+  "version": "0.1",
+  "background": {
+    "scripts": [
+      "jquery-3.1.1.min.js",
+      "background.js"
+    ]
+  },
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "all_frames": true,
+      "js": [
+        "jquery-3.1.1.min.js",
+        "content.js"
+      ],
+      "matches": [ "http://*/*", "https://*/*" ]
+    }
+  ],
+  "permissions": [
+    "contextMenus",
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Common Responses"
+  },
+  "options_page": "saved.html"
+}
