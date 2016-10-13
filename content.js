@@ -1,5 +1,9 @@
-function markupTemplate(template) {
-    template = '<p>' + template.replace(/\n{2}/g, '&nbsp;</p><p>&nbsp;</p><p>').replace(/\n/g, '&nbsp;<br />') + '</p>';
+function markupTemplate(template, amount) {
+    if (amount == 'double') {
+        template = '<p>' + template.replace(/\n{2}/g, '&nbsp;</p><p>&nbsp;</p><p>').replace(/\n/g, '&nbsp;<br />') + '</p>';
+    } else {
+        template = template.replace(/\n{2}/g, '&nbsp;</p><p>').replace(/\n/g, '&nbsp;<br />');
+    }
     return template;
 }
 
@@ -31,12 +35,7 @@ function replacePlaceholders(template) {
 }
 
 chrome.runtime.onMessage.addListener(
-    function(request, x, y) {
-
-        console.log(request);
-        console.log(x);
-        console.log(y);
-
+    function(request) {
         var template    = request.template,
             focused     = $(':focus'),
             textbox     = $("div[role='textbox']:focus"),
@@ -52,7 +51,7 @@ chrome.runtime.onMessage.addListener(
         }
 
         if (textbox.length > 0) {
-            textbox.html(markupTemplate(template));
+            textbox.html(markupTemplate(template, 'single'));
         }
 
         if (iframe.length > 0) {
@@ -60,7 +59,7 @@ chrome.runtime.onMessage.addListener(
                 iframe = iframe.contents().find("body")[0];
 
                 if (iframe) {
-                    iframe.innerHTML = markupTemplate(template);
+                    iframe.innerHTML = markupTemplate(template, 'double');
                 }
             } catch (err) {
 
