@@ -72,7 +72,6 @@ function createClipping(text){
 }
 
 var addFromSelectionClick = function(e) {
-
     // We know that selected text exists
     if (e.selectionText) {
 
