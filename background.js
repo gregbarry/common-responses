@@ -1,10 +1,12 @@
 function buildMenu(initial) {
     var clipTexts  = getLocalStorage("cliptext"),
-        clipTitles = getLocalStorage("cliptext"),
+        clipTitles = getLocalStorage("cliptitle"),
         clipId     = getLocalStorage("clipid"),
         clipCount  = clipTexts.length || 0;
 
     if (initial) {
+        chrome.contextMenus.removeAll()
+
         var root = chrome.contextMenus.create({
             title: 'Common Responses',
             type : "normal",
@@ -13,7 +15,7 @@ function buildMenu(initial) {
         });
 
         chrome.contextMenus.create({
-            title: 'Add Clipping from Selection',
+            title: 'Add Response from Selection',
             type : "normal",
             contexts: ["all", "editable"],
             parentId: root,
@@ -47,8 +49,19 @@ function buildMenu(initial) {
     }
 }
 
+function checkId(clipId, key) {
+
+    if (clipId.indexOf(key) > -1) {
+        key = Number((key.replace('clip_', ''))) + 1;
+        key = 'clip_' + key;
+        checkId(clipId, key);
+    }
+
+    return key;
+}
+
 function createClipping(text){
-    var clipText, clipTitle, clipId, key;
+    var clipText, clipTitle, clipId, key, prepTitle;
 
     try {
         clipText  = getLocalStorage("cliptext")  || [];
@@ -60,7 +73,11 @@ function createClipping(text){
 
     key = 'clip_' + (clipTitle.length + 1);
 
-    clipTitle.push(text.substring(0, 20).replace(/(\r\n|\n|\r)/gm,"") + '...');
+    key = checkId(clipId, key);
+
+    prepTitle = text.substring(0, 20).replace(/(\r\n|\n|\r)/gm,"") + '...';
+
+    clipTitle.push(prepTitle);
     clipText.push(text);
     clipId.push(key);
 
@@ -119,7 +136,12 @@ function getLocalStorage(field) {
 }
 
 function setLocalStorage(field, value) {
-    localStorage.setItem(field, value.join('||||||'));
+    var cleanedValue = value.join('||||||');
+
+    if (cleanedValue.substring(0,11) == '||||||||||||') {
+        cleanedValue = cleanedValue.slice(0,11);
+    }
+    localStorage.setItem(field, cleanedValue);
 }
 
 buildMenu(true);

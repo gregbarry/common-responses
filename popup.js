@@ -2,54 +2,106 @@
  * Do things when the dom is loaded for the main menu
  */
 document.addEventListener('DOMContentLoaded', function() {
-    function markupTemplate(template, amount) {
-        template = '<p>' + template.replace(/\n{2}/g, '&nbsp;</p><p>&nbsp;</p><p>').replace(/\n/g, '&nbsp;<br />') + '</p>';
-        return template;
-    }
-
-    function getLocalStorage(field) {
-        var getLocal = localStorage.getItem(field);
-
-        return (getLocal) ? getLocal.split('||||||') : '';
-    }
-
-    function setLocalStorage(field, value) {
-        localStorage.setItem(field, value.join('||||||'));
-    }
-
-    var clipTexts  = getLocalStorage("cliptext"),
-        clipTitles = getLocalStorage("cliptext"),
-        clipId     = getLocalStorage("clipid");
-
-    for (var i = 0; i <= clipTitles.length; i++) {
-        if (clipTitles[i]) {
-            $('#responses').append($('<div>', {
-                class  : 'group',
-                id     : clipId[i],
-                html   : "<h3>" + (i+1) + ". " + clipTitles[i].substring(0, 10) + "</h3>" +
-                         "<div><p><label>Title</label><br><input type='text' id='update_title_" + clipId[i] + "' value='" + clipTitles[i] +"'>'</p>" +
-                         "<p><label>Response</label><br><textarea id='update_text_" + clipId[i] + "'>" + clipTexts[i] +
-                         "</textarea></p><p><input type='submit'/></p></div>"
-            }));
-        }
-    }
-
     $( function() {
-        $( "#responses" )
-            .accordion({
-                header: "> div > h3"
-            })
-            .sortable({
-                axis: "y",
-                handle: "h3",
-                stop: function( event, ui ) {
-                    // IE doesn't register the blur when sorting
-                    // so trigger focusout handlers to remove .ui-state-focus
-                    ui.item.children( "h3" ).triggerHandler( "focusout" );
+        $("#main_menu").accordion({
+            collapsible: true,
+            heightStyle: "content",
+            header: "> div > h3"
+        });
 
-                    // Refresh accordion to handle new order
-                    $( this ).accordion( "refresh" );
+        $(document).on('click', '.update_submit', function() {
+            var clipTexts    = getLocalStorage("cliptext"),
+                clipTitles   = getLocalStorage("cliptitle"),
+                clipId       = getLocalStorage("clipid"),
+                accordionRef = $("#responses"),
+                id           = $(this).attr('id').replace('update_', ''),
+                i            = clipId.indexOf(id),
+                title        = $('#update_title_' + id).val(),
+                text         = $('#update_text_'  + id).val();
+
+            clipTitles[i] = title;
+            clipTexts[i]  = text;
+
+            setLocalStorage("cliptext",  clipTexts);
+            setLocalStorage("cliptitle", clipTitles);
+
+            chrome.extension.getBackgroundPage().buildMenu(true);
+
+            accordionRef.accordion( "destroy" );
+            accordionRef.empty();
+            buildAccordion();
+        });
+
+        $(document).on('click', '.delete_submit', function() {
+            var clipTexts    = getLocalStorage("cliptext"),
+                clipTitles   = getLocalStorage("cliptitle"),
+                clipId       = getLocalStorage("clipid"),
+                responsesRef = $("#responses"),
+                id           = $(this).attr('id').replace('delete_', ''),
+                i            = clipId.indexOf(id);
+
+            if(i != -1) {
+                clipTexts.splice(i, 1);
+                clipTitles.splice(i, 1);
+                clipId.splice(i, 1);
+            }
+
+            setLocalStorage("cliptext",  clipTexts);
+            setLocalStorage("cliptitle", clipTitles);
+            setLocalStorage("clipid",    clipId);
+
+            chrome.extension.getBackgroundPage().buildMenu(true);
+
+            responsesRef.accordion( "destroy" );
+            responsesRef.empty();
+            buildAccordion();
+        });
+
+        function buildAccordion() {
+
+            var clipTexts    = getLocalStorage("cliptext"),
+                clipTitles   = getLocalStorage("cliptitle"),
+                clipId       = getLocalStorage("clipid"),
+                responsesRef = $('#responses');
+
+            for (var i = 0; i <= clipTitles.length; i++) {
+                if (clipTitles[i]) {
+                    responsesRef.append($('<div>', {
+                        class  : 'group second_tier',
+                        id     : clipId[i],
+                        html   : "<h3>" + (i+1) + ". " + clipTitles[i] + "</h3>" +
+                        '<div><p><label>Title</label><br><input type="text" id="update_title_' + clipId[i] + '" value="' + clipTitles[i] + '"></p>' +
+                        "<p><label>Response</label><br><textarea id='update_text_" + clipId[i] + "'>" + clipTexts[i] + "</textarea></p>" +
+                        "<p><input type='submit' class='update_submit' id='update_"+clipId[i]+"' value='update'/>" +
+                        "<input type='submit' class='delete_submit' id='delete_"+clipId[i]+"' value='delete'/></p></div>"
+                    }));
                 }
+            }
+
+            responsesRef.accordion({
+                collapsible: true,
+                heightStyle: "content",
+                header: "> div > h3"
             });
+        }
+
+        function getLocalStorage(field) {
+            var getLocal = localStorage.getItem(field);
+
+            return (getLocal) ? getLocal.split('||||||') : '';
+        }
+
+        function setLocalStorage(field, value) {
+            localStorage.setItem(field, value.join('||||||'));
+        }
+
+        function swapElement(array, indexA, indexB) {
+            var tmp = array[indexA];
+            array[indexA] = array[indexB];
+            array[indexB] = tmp;
+        }
+
+        buildAccordion();
+
     } );
 }, false);
