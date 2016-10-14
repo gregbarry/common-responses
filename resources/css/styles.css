@@ -33,3 +33,18 @@ html > body #responses li {
 .ui-accordion .ui-accordion-content {
     padding: 10px;
 }
+
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active,
+a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+    background: #87BD3E;
+}
+
+.second_tier .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active,
+a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+    background:#555;
+}
+
+.vertical_img {
+    vertical-align:middle;
+    width:48px;
+}

@@ -2,15 +2,57 @@
 <html>
 <head>
     <title>Common Responses</title>
-    <script src="popup.js"></script>
     <link rel="stylesheet" href="resources/css/jquery-ui.css">
     <link rel="stylesheet" href="resources/css/styles.css">
     <script src="resources/js/jquery-3.1.1.min.js"></script>
     <script src="resources/js/jquery-ui.min.js"></script>
+    <script src="popup.js"></script>
 </head>
 <body>
-<h1>Common Responses</h1>
-<h2>Administer Responses</h2>
-<div id="responses"></div>
+<h1><img class='vertical_img' src="resources/images/icon128.png"/> Common Responses</h1>
+
+<div id="main_menu">
+    <div class="group">
+        <h3>Administer Responses</h3>
+        <div id="responses"></div>
+    </div>
+    <div class="group">
+        <h3>Help</h3>
+        <div id="help">
+            <h4>Create a Response</h4>
+            <p>To create a response, simply select the text and "right+click".  Highlight "Common Responses" in your
+                context menu and then select "Create Response from Selection".</p>
+
+            <h4>Placing a Response</h4>
+            <p>To post one of your saved responses, just click within the textarea and "right+click".  Select the
+                response you'd like to use, and it should appear within your form field.</p>
+
+            <h4>Editing a Response</h4>
+            <p>You can edit your responses (and the titles that appear in the context menus) by clicking on this extension's
+                icon in your toolbar.  This will create a popup window in which you can update your text.  Just make your
+                changes and click "update".</p>
+
+            <h4>Deleting a Response</h4>
+            <p>You can delete a response by clicking on this extension's icon in your toolbar.  This will create a
+                popup window in which you can delete your response.  Just make your changes and click "delete".</p>
+
+            <h4>Using Placeholders</h4>
+            <p>You can also use placeholders in your responses.  Just add a variable name within curly brackets like this:<br>
+                <pre>{name}</pre>
+            </p>
+            <p>This will cause a prompt to appear whenever you place a response.  The value that you enter will replace
+                the placeholder.</p>
+        </div>
+    </div>
+    <div class="group">
+        <h3>Disclaimer</h3>
+        <div id="disclaimer">
+            <p>This is my first extension and it was built in a very short amount of time and most certainly has issues.
+                Please feel to report them here:<br>
+                <a href="https://github.com/gregbarry/common-responses">https://github.com/gregbarry/common-responses</a>
+            </p>
+        </div>
+    </div>
+</div>
 </body>
 </html>
