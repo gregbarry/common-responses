@@ -43,17 +43,25 @@ function buildMenu(initial) {
             type : "normal",
             contexts: ["all", "editable"],
             onclick: contextMenuClick,
-            id: clipId[clipCount-1],
+            id: checkId(clipId,clipId[clipCount-1], 'clip_'),
             parentId: 'rootNode'
         });
     }
 }
 
-function checkId(clipId, key) {
+/**
+ * Check the array of known clip ids to determine if one is already in use.  If so, +1.
+ *
+ * @param clipId
+ * @param key
+ * @param pretext
+ * @returns {*}
+ */
+function checkId(clipId, key, pretext) {
 
     if (clipId.indexOf(key) > -1) {
-        key = Number((key.replace('clip_', ''))) + 1;
-        key = 'clip_' + key;
+        key = Number((key.replace(pretext, ''))) + 1;
+        key = pretext + key;
         checkId(clipId, key);
     }
 
@@ -68,14 +76,14 @@ function createClipping(text){
         clipTitle = getLocalStorage("cliptitle") || [];
         clipId    = getLocalStorage("clipid")    || [];
     } catch(err){
-
+        console.log('Could not retrieve records.');
     }
 
     key = 'clip_' + (clipTitle.length + 1);
 
-    key = checkId(clipId, key);
+    key = checkId(clipId, key, 'clip_');
 
-    prepTitle = text.substring(0, 20).replace(/(\r\n|\n|\r)/gm,"") + '...';
+    prepTitle = text.substring(0, 20).replace(/(\r\n|\n|\r)/gm,"") + '...' || '';
 
     clipTitle.push(prepTitle);
     clipText.push(text);
@@ -136,12 +144,20 @@ function getLocalStorage(field) {
 }
 
 function setLocalStorage(field, value) {
+
     var cleanedValue = value.join('||||||');
 
     if (cleanedValue.substring(0,11) == '||||||||||||') {
         cleanedValue = cleanedValue.slice(0,11);
     }
     localStorage.setItem(field, cleanedValue);
+
 }
+
+chrome.runtime.onMessage.addListener(function(request, sender, callback) {
+    if (request.type == 'backgroundData') {
+        callback( getLocalStorage(request.text) );
+    }
+});
 
 buildMenu(true);

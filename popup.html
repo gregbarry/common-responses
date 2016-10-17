@@ -37,11 +37,18 @@
                 popup window in which you can delete your response.  Just make your changes and click "delete".</p>
 
             <h4>Using Placeholders</h4>
-            <p>You can also use placeholders in your responses.  Just add a variable name within curly brackets like this:<br>
-                <pre>{name}</pre>
+            <p>You can also use placeholders in your responses.  Just add a variable name within double brackets like this:<br>
+            <pre>[[name]]</pre>
             </p>
             <p>This will cause a prompt to appear whenever you place a response.  The value that you enter will replace
                 the placeholder.</p>
+
+            <h4>Using Includes</h4>
+            <p>You can also use include other responses within your responses.  Just add the number of your desired response within
+                double dollar signs like this:<br>
+            <pre>$$3$$</pre>
+            </p>
+            <p>This will include the referenced response.  Includes are ideal for signatures and tag lines.</p>
         </div>
     </div>
     <div class="group">
