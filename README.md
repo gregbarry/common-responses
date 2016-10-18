@@ -20,11 +20,16 @@ You can delete a response by clicking on this extension's icon in your toolbar. 
 popup window in which you can delete your response.  Just make your changes and click "delete".
 
 ##Using Placeholders
-You can also use placeholders in your responses.  Just add a variable name within curly brackets like this:
+You can also use placeholders in your responses.  Just add a variable name within double brackets like this:
+
+  [[name]]
+
+This will cause a prompt to appear whenever you place a response.  The value that you enter will replace the placeholder.
+
+#Using Includes
+You can also use include other responses within your responses.  Just add the number of your desired response within 
+double dollar signs like this:
+
+  $$3$$
   
-  {name}
-
-This will cause a prompt to appear whenever you place a response.  The value that you enter will replace
-the placeholder.
-
-
+This will include the referenced response.  Includes are ideal for signatures and tag lines.
