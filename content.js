@@ -33,9 +33,9 @@ function replaceIncludes(clipTexts, template) {
             index = cleanInclude - 1;
 
         template = template.replace(match, clipTexts[index]);
-
-        return template;
     }
+
+    return template;
 }
 
 function checkForPlaceholder(template) {
@@ -71,7 +71,6 @@ function checkEntryPoints(template) {
         fb          = $("[data-text='true']"),
         iframe      = $("iframe"),
         placeholder = checkForPlaceholder(template);
-
 
     if (placeholder) {
         template = replacePlaceholders(template);
@@ -112,7 +111,6 @@ chrome.runtime.onMessage.addListener(
             // We have to do a async callback here because we're getting data from the background
             // There is new Chrome storage option to look into in the future
             getBackgroundData('cliptext', function(value){
-
                 template = replaceIncludes(value, template);
                 checkEntryPoints(template);
             });
