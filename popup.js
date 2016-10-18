@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     responsesRef.append($('<div>', {
                         class  : 'group second_tier',
                         id     : clipId[i],
-                        html   : "<h3>" + (i+1) + ". " + clipTitles[i] + "</h3>" +
+                        html   : "<h3 id='id_"+i+"' data-order='"+i+"'>" + (i+1) + ". " + clipTitles[i] + "</h3>" +
                         '<div><p><label>Title</label><br><input type="text" id="update_title_' + clipId[i] + '" value="' + clipTitles[i] + '"></p>' +
                         "<p><label>Response</label><br><textarea id='update_text_" + clipId[i] + "'>" + clipTexts[i] + "</textarea></p>" +
                         "<p><input type='submit' class='update_submit' id='update_"+clipId[i]+"' value='update'/>" +
@@ -82,7 +82,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 collapsible: true,
                 heightStyle: "content",
                 header: "> div > h3"
+            }).sortable({
+                axis: 'y',
+                handle: 'h3',
+                stop: function (event, ui) {
+                    ui.item.children( "h3" ).triggerHandler( "focusout" );
+                    // Refresh accordion to handle new order
+                    $( this ).accordion( "refresh" );
+                },
+                update: function () {
+                    $("#responses h3").each(function() {
+                        var id      = $(this).attr('id').replace('id_', ''),
+                            order   = $(this).index('h3') - 1;
+
+                        if (id != order) {
+                            clipTexts  = swap(clipTexts, id, order);
+                            clipTitles = swap(clipTitles, id, order);
+                            return false;
+                        }
+                    });
+
+                    setLocalStorage("cliptext" ,  clipTexts);
+                    setLocalStorage("cliptitle", clipTitles);
+
+                    chrome.extension.getBackgroundPage().buildMenu(true);
+
+                    responsesRef.accordion( "destroy" );
+                    responsesRef.empty();
+                    buildAccordion();
+                }
             });
+        }
+
+        function swap(array, id, order) {
+            var temp     = array[id];
+            array[id]    = array[order];
+            array[order] = temp;
+            return array;
         }
 
         function getLocalStorage(field) {
@@ -93,12 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function setLocalStorage(field, value) {
             localStorage.setItem(field, value.join('||||||'));
-        }
-
-        function swapElement(array, indexA, indexB) {
-            var tmp = array[indexA];
-            array[indexA] = array[indexB];
-            array[indexB] = tmp;
         }
 
         buildAccordion();
