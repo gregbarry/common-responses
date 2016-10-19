@@ -32,6 +32,41 @@ document.addEventListener('DOMContentLoaded', function() {
             buildAccordion();
         });
 
+        $('.submit_import').click(function(e) {
+            var text     = $('textarea#export_output').val(),
+                sections = text.split('||||||||'),
+                stores   = ['clipid','cliptitle','cliptext'],
+                responsesRef = $("#responses");
+
+
+            $(stores).each(function(index, value) {
+                console.log(JSON.parse(sections[index]));
+                localStorage.setItem(value, JSON.parse(sections[index]).join('||||||'));
+            });
+
+            chrome.extension.getBackgroundPage().buildMenu(true);
+
+            responsesRef.accordion( "destroy" );
+            responsesRef.empty();
+            buildAccordion();
+
+            e.preventDefault();
+        });
+
+        $('.export_file').click(function() {
+            var clipTexts    = JSON.stringify(getLocalStorage("cliptext")),
+                clipTitles   = JSON.stringify(getLocalStorage("cliptitle")),
+                clipId       = JSON.stringify(getLocalStorage("clipid")),
+                items        = clipId + "||||||||" + clipTitles + "||||||||" + clipTexts;
+
+            // Save as file
+            var url = 'data:application/json;base64,' + btoa(items);
+            chrome.downloads.download({
+                url: url,
+                filename: 'common_responses_output.json'
+            });
+        });
+
         $(document).on('click', '.delete_submit', function() {
             var clipTexts    = getLocalStorage("cliptext"),
                 clipTitles   = getLocalStorage("cliptitle"),
