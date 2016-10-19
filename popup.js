@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var clipTexts    = getLocalStorage("cliptext"),
                 clipTitles   = getLocalStorage("cliptitle"),
                 clipId       = getLocalStorage("clipid"),
-                accordionRef = $("#responses"),
+                responsesRef = $("#responses"),
                 id           = $(this).attr('id').replace('update_', ''),
                 i            = clipId.indexOf(id),
                 title        = $('#update_title_' + id).val(),
@@ -25,30 +25,51 @@ document.addEventListener('DOMContentLoaded', function() {
             setLocalStorage("cliptext",  clipTexts);
             setLocalStorage("cliptitle", clipTitles);
 
-            chrome.extension.getBackgroundPage().buildMenu(true);
-
-            accordionRef.accordion( "destroy" );
-            accordionRef.empty();
-            buildAccordion();
+            cleanup(responsesRef);
         });
 
+        $(document).on('click', '.add_submit', function() {
+            var clipTexts    = getLocalStorage("cliptext") || [],
+                clipTitles   = getLocalStorage("cliptitle") || [],
+                clipId       = getLocalStorage("clipid") || [],
+                clipCount    = clipTexts.length || 0,
+                responsesRef = $("#responses"),
+                id           = 'clip_' + clipCount,
+                title        = $('#add_title').val(),
+                text         = $('#add_text').val(),
+                finalId      = chrome.extension.getBackgroundPage().checkId(clipId,id, 'clip_'),
+                finalNum     = finalId.replace('clip_', ''),
+                tab          = $('.second_tier').length - 1;
+
+            $('#add_title').val('');
+            $('#add_text').val('');
+
+            clipId[finalNum]     = finalId;
+            clipTitles[finalNum] = title;
+            clipTexts[finalNum]  = text;
+
+            $('#main_menu').accordion({ active: 1 });
+
+            setLocalStorage("clipid",    clipId);
+            setLocalStorage("cliptitle", clipTitles);
+            setLocalStorage("cliptext",  clipTexts);
+
+            cleanup(responsesRef, tab);
+        });
+
+
         $('.submit_import').click(function(e) {
-            var text     = $('textarea#export_output').val(),
+            var text     = decodeURIComponent($('textarea#export_output').val()),
                 sections = text.split('||||||||'),
                 stores   = ['clipid','cliptitle','cliptext'],
                 responsesRef = $("#responses");
 
-
             $(stores).each(function(index, value) {
-                console.log(JSON.parse(sections[index]));
-                localStorage.setItem(value, JSON.parse(sections[index]).join('||||||'));
+                var content = jQuery.parseJSON(sections[index]);
+                localStorage.setItem(value, content.join('||||||'));
             });
 
-            chrome.extension.getBackgroundPage().buildMenu(true);
-
-            responsesRef.accordion( "destroy" );
-            responsesRef.empty();
-            buildAccordion();
+            cleanup(responsesRef);
 
             e.preventDefault();
         });
@@ -60,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 items        = clipId + "||||||||" + clipTitles + "||||||||" + clipTexts;
 
             // Save as file
-            var url = 'data:application/json;base64,' + btoa(items);
+            var url = 'data:application/json;base64,' + btoa(encodeURIComponent(items));
             chrome.downloads.download({
                 url: url,
                 filename: 'common_responses_output.json'
@@ -85,11 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setLocalStorage("cliptitle", clipTitles);
             setLocalStorage("clipid",    clipId);
 
-            chrome.extension.getBackgroundPage().buildMenu(true);
-
-            responsesRef.accordion( "destroy" );
-            responsesRef.empty();
-            buildAccordion();
+            cleanup(responsesRef);
         });
 
         function buildAccordion() {
@@ -97,7 +114,16 @@ document.addEventListener('DOMContentLoaded', function() {
             var clipTexts    = getLocalStorage("cliptext"),
                 clipTitles   = getLocalStorage("cliptitle"),
                 clipId       = getLocalStorage("clipid"),
-                responsesRef = $('#responses');
+                responsesRef = $('#responses'),
+                addResponses = $('#add_responses');
+
+            addResponses.replaceWith($('<div>', {
+                class  : 'group second_tier',
+                html   : "<h3> Add Response</h3>" +
+                '<div><p><label>Title</label><br><input type="text" id="add_title"></p>' +
+                "<p><label>Response</label><br><textarea id='add_text'></textarea></p>" +
+                "<p><input type='submit' class='add_submit' value='add'/></p></div>"
+            }));
 
             for (var i = 0; i <= clipTitles.length; i++) {
                 if (clipTitles[i]) {
@@ -126,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     $( this ).accordion( "refresh" );
                 },
                 update: function () {
-                    $("#responses h3").each(function() {
+                    $("#responses").find("h3").each(function() {
                         var id      = $(this).attr('id').replace('id_', ''),
                             order   = $(this).index('h3') - 1;
 
@@ -140,13 +166,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     setLocalStorage("cliptext" ,  clipTexts);
                     setLocalStorage("cliptitle", clipTitles);
 
-                    chrome.extension.getBackgroundPage().buildMenu(true);
-
-                    responsesRef.accordion( "destroy" );
-                    responsesRef.empty();
-                    buildAccordion();
+                    cleanup(responsesRef);
                 }
             });
+        }
+
+        function cleanup(responsesRef, tab) {
+            chrome.extension.getBackgroundPage().buildMenu(true);
+
+            responsesRef.accordion( "destroy" );
+            responsesRef.empty();
+            buildAccordion();
+
+            if (tab) {
+                responsesRef.accordion({ active: tab });
+            }
         }
 
         function swap(array, id, order) {
