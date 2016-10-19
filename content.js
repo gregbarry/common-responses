@@ -119,7 +119,6 @@ function replacePlaceholders(template) {
             cleanPlaceholder = match.replace('[[', '').replace(']]', '');
 
         promptValue = prompt("Please enter " + cleanPlaceholder);
-
         replacements[match] = promptValue;
     }
 
@@ -166,7 +165,7 @@ function checkEntryPoints(template) {
                 caret = getIframeCaret(iframe[0]);
 
                 //var currentValue = $(iframeBody).html() || '';
-                appendAtCaret(iframeBody, caret, markupTemplate(template, 'single'), true);
+                appendAtCaret(iframeBody, caret, markupTemplate(template, 'double'), true);
                 //iframeBody.innerHTML = markupTemplate(template, 'double');
             }
         } catch (err) {
@@ -192,4 +191,3 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
-

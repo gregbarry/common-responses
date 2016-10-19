@@ -13,8 +13,23 @@
 
 <div id="main_menu">
     <div class="group">
+    <h3>Add Response</h3>
+    <div id="add_responses"></div>
+    </div>
+    <div class="group">
         <h3>Administer Responses</h3>
         <div id="responses"></div>
+    </div>
+    <div class="group">
+        <h3>Import/Export</h3>
+        <div id="imports_exports">
+            <h4>Import</h4>
+            <p>Paste the contents of `common_responses_output.json` here:</p>
+            <p><textarea id="export_output" name="export_output"></textarea></p>
+            <p><input type="submit" class="submit_import"></p>
+            <h4>Export</h4>
+            <a href="#" class="export_file">Download Export File</a>
+        </div>
     </div>
     <div class="group">
         <h3>Help</h3>
@@ -49,22 +64,6 @@
             <pre>$$3$$</pre>
             </p>
             <p>This will include the referenced response.  Includes are ideal for signatures and tag lines.</p>
-        </div>
-    </div>
-    <div class="group">
-        <h3>Import/Export</h3>
-        <div id="imports_exports">
-            <h4>Import</h4>
-            <p>Paste the contents of `common_responses_output.json` here:</p>
-            <p><textarea id="export_output" name="export_output"></textarea></p>
-            <p><input type="submit" class="submit_import"></p>
-            <h4>Export</h4>
-            <a href="#" class="export_file">Download Export File</a>
-        </div>
-    </div>
-    <div class="group">
-        <h3>Disclaimer</h3>
-        <div id="disclaimer">
             <p>This is my first extension and it was built in a very short amount of time and most certainly has issues.
                 Please feel to report them here:
             </p>
