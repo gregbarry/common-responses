@@ -7,6 +7,36 @@ function markupTemplate(template, amount) {
     return template;
 }
 
+function appendAtCaret($target, caret, $value, iframe) {
+    var value;
+
+    if (iframe) {
+        value = $($target).html();
+
+        if (caret == 0) {
+            $($target).html($value + '' + value);
+        } else {
+            $($target).html(value + '' + $value);
+        }
+    } else {
+        value = $target.val();
+    }
+
+    if (caret != value.length) {
+        var startPos = $target.prop("selectionStart"),
+            scrollTop = $target.scrollTop;
+
+        $target.val(value.substring(0, caret) + '' + $value + '' + value.substring(caret, value.length));
+        $target.prop("selectionStart", startPos + $value.length);
+        $target.prop("selectionEnd", startPos + $value.length);
+        $target.scrollTop = scrollTop;
+    } else if (caret == 0) {
+        $target.val($value + '' + value);
+    } else {
+        $target.val(value + '' + $value);
+    }
+}
+
 function checkForInclude(template) {
     var re = /.*\$\$.*\$\$.*/;
 
@@ -21,6 +51,41 @@ function getBackgroundData(text, fn) {
     }, function(value) {
         return fn(value);
     });
+}
+
+function getIframeCaret(el) {
+    var sel, range;
+
+    el.contentWindow.focus();
+    sel = el.contentWindow.getSelection();
+
+    if (sel.getRangeAt && sel.rangeCount) {
+        range = sel.getRangeAt(0);
+
+        return range.startOffset;
+    }
+}
+
+function getCaret(el) {
+    if (el.prop("selectionStart")) {
+        return el.prop("selectionStart");
+    } else if (document.selection) {
+        el.focus();
+
+        var r = document.selection.createRange();
+        if (r == null) {
+            return 0;
+        }
+
+        var re = el.createTextRange(),
+            rc = re.duplicate();
+        re.moveToBookmark(r.getBookmark());
+        rc.setEndPoint('EndToStart', re);
+
+        return rc.text.length;
+    }
+
+    return 0;
 }
 
 function replaceIncludes(clipTexts, template) {
@@ -70,7 +135,8 @@ function checkEntryPoints(template) {
         textbox     = $("div[role='textbox']:focus"),
         fb          = $("[data-text='true']"),
         iframe      = $("iframe"),
-        placeholder = checkForPlaceholder(template);
+        placeholder = checkForPlaceholder(template),
+        caret;
 
     if (placeholder) {
         template = replacePlaceholders(template);
@@ -81,20 +147,27 @@ function checkEntryPoints(template) {
         //$(fb[0]).replaceWith("<span data-text='true'>"+template+"</span>");
     }
 
-    if (focused) {
-        focused.val(template);
+    if (focused.length > 0) {
+        caret = getCaret(focused);
+        appendAtCaret(focused, caret, template);
+        //focused.val(template);
     }
 
     if (textbox.length > 0) {
-        textbox.html(markupTemplate(template, 'single'));
+        caret = getCaret(textbox);
+        appendAtCaret(textbox, caret, markupTemplate(template, 'single'));
     }
 
     if (iframe.length > 0) {
         try {
-            iframe = iframe.contents().find("body")[0];
+            var iframeBody = iframe.contents().find("body")[0];
 
             if (iframe) {
-                iframe.innerHTML = markupTemplate(template, 'double');
+                caret = getIframeCaret(iframe[0]);
+
+                //var currentValue = $(iframeBody).html() || '';
+                appendAtCaret(iframeBody, caret, markupTemplate(template, 'single'), true);
+                //iframeBody.innerHTML = markupTemplate(template, 'double');
             }
         } catch (err) {
 
