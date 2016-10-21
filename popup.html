@@ -11,16 +11,25 @@
 <body>
 <h1><img class='vertical_img' src="resources/images/icon128.png"/> Common Responses</h1>
 
-<div id="main_menu">
-    <div class="group">
-    <h3>Add Response</h3>
-    <div id="add_responses"></div>
+<div id="tabs">
+    <ul>
+        <li><a href="#responses_tab">Add Response</a></li>
+        <li><a href="#edit_responses_tab">Edit Responses</a></li>
+        <li><a href="#import_export_tab">Import/Export</a></li>
+        <li><a href="#help_tab">Help</a></li>
+    </ul>
+    <div id="responses_tab">
+        <div class="group">
+            <div id="add_responses"></div>
+        </div>
     </div>
-    <div class="group">
-        <h3>Administer Responses</h3>
-        <div id="responses"></div>
+    <div id="edit_responses_tab">
+        <div class="group">
+            <h3>Administer Responses</h3>
+            <div id="responses"></div>
+        </div>
     </div>
-    <div class="group">
+    <div id="import_export_tab">
         <h3>Import/Export</h3>
         <div id="imports_exports">
             <h4>Import</h4>
@@ -31,46 +40,47 @@
             <a href="#" class="export_file">Download Export File</a>
         </div>
     </div>
-    <div class="group">
-        <h3>Help</h3>
-        <div id="help">
-            <h4>Create a Response</h4>
-            <p>To create a response, simply select the text and "right+click".  Highlight "Common Responses" in your
-                context menu and then select "Create Response from Selection".</p>
+    <div id="help_tab">
+        <h4>Create a Response</h4>
+        <p>To create a response, you can simply fill in the text fields on the "Add Response" tab.</p>
 
-            <h4>Placing a Response</h4>
-            <p>To post one of your saved responses, just click within the textarea and "right+click".  Select the
-                response you'd like to use, and it should appear within your form field.</p>
+        <p>You can also add a response by selecting text in the browser and "right+click". Highlight "Common Responses" in your
+            context menu and then select "Create Response from Selection".</p>
 
-            <h4>Editing a Response</h4>
-            <p>You can edit your responses (and the titles that appear in the context menus) by clicking on this extension's
-                icon in your toolbar.  This will create a popup window in which you can update your text.  Just make your
-                changes and click "update".</p>
+        <h4>Placing a Response</h4>
+        <p>To post one of your saved responses, just click within the textarea and "right+click".  Select the
+            response you'd like to use, and it should appear within your form field.</p>
 
-            <h4>Deleting a Response</h4>
-            <p>You can delete a response by clicking on this extension's icon in your toolbar.  This will create a
-                popup window in which you can delete your response.  Just make your changes and click "delete".</p>
+        <h4>Editing a Response</h4>
+        <p>You can edit your responses (and the titles that appear in the context menus) by clicking on this extension's
+            icon in your toolbar.  This will create a popup window in which you can update your text.  Just make your
+            changes and click "update".</p>
 
-            <h4>Using Placeholders</h4>
-            <p>You can also use placeholders in your responses.  Just add a variable name within double brackets like this:<br>
-            <pre>[[name]]</pre>
-            </p>
-            <p>This will cause a prompt to appear whenever you place a response.  The value that you enter will replace
-                the placeholder.</p>
+        <p>You can also reorder your responses as per your preference.</p>
 
-            <h4>Using Includes</h4>
-            <p>You can also use include other responses within your responses.  Just add the number of your desired response within
-                double dollar signs like this:<br>
-            <pre>$$3$$</pre>
-            </p>
-            <p>This will include the referenced response.  Includes are ideal for signatures and tag lines.</p>
-            <p>This is my first extension and it was built in a very short amount of time and most certainly has issues.
-                Please feel to report them here:
-            </p>
-            <p>
-                <a target="_blank" href="https://github.com/gregbarry/common-responses">https://github.com/gregbarry/common-responses</a>
-            </p>
-        </div>
+        <h4>Deleting a Response</h4>
+        <p>You can delete a response by clicking on this extension's icon in your toolbar.  This will create a
+            popup window in which you can delete your response.  Just make your changes and click "delete".</p>
+
+        <h4>Using Placeholders</h4>
+        <p>You can also use placeholders in your responses.  Just add a variable name within double brackets like this:<br>
+        <pre>[[name]]</pre>
+        </p>
+        <p>This will cause a prompt to appear whenever you place a response.  The value that you enter will replace
+            the placeholder.</p>
+
+        <h4>Using Includes</h4>
+        <p>You can also use include other responses within your responses.  Just add the number of your desired response within
+            double dollar signs like this:<br>
+        <pre>$$6$$</pre>
+        </p>
+        <p>This will include the referenced response.  Includes are ideal for signatures and tag lines.</p>
+        <p>This is my first extension and it was built in a very short amount of time and most certainly has issues.
+            Please feel to report them here:
+        </p>
+        <p>
+            <a target="_blank" href="https://github.com/gregbarry/common-responses">https://github.com/gregbarry/common-responses</a>
+        </p>
     </div>
 </div>
 </body>

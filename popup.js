@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
             header: "> div > h3"
         });
 
+        $("#tabs").tabs();
+
         $(document).on('click', '.update_submit', function() {
             var clipTexts    = getLocalStorage("cliptext"),
                 clipTitles   = getLocalStorage("cliptitle"),
@@ -179,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
             buildAccordion();
 
             if (tab) {
+                $( "#tabs" ).tabs( "option", "active", 1 );
                 responsesRef.accordion({ active: tab });
             }
         }

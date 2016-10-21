@@ -137,22 +137,24 @@ function checkEntryPoints(template) {
         placeholder = checkForPlaceholder(template),
         caret;
 
-    if (placeholder) {
-        template = replacePlaceholders(template);
-    }
-
     if (fb.length > 0) {
         // In the works to post on FaceBook
         //$(fb[0]).replaceWith("<span data-text='true'>"+template+"</span>");
     }
 
     if (focused.length > 0) {
+        if (placeholder) {
+            template = replacePlaceholders(template);
+        }
         caret = getCaret(focused);
         appendAtCaret(focused, caret, template);
         //focused.val(template);
     }
 
     if (textbox.length > 0) {
+        if (placeholder) {
+            template = replacePlaceholders(template);
+        }
         caret = getCaret(textbox);
         appendAtCaret(textbox, caret, markupTemplate(template, 'single'));
     }
@@ -162,6 +164,9 @@ function checkEntryPoints(template) {
             var iframeBody = iframe.contents().find("body")[0];
 
             if (iframe) {
+                if (placeholder) {
+                    template = replacePlaceholders(template);
+                }
                 caret = getIframeCaret(iframe[0]);
 
                 //var currentValue = $(iframeBody).html() || '';
