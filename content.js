@@ -133,7 +133,7 @@ function checkEntryPoints(template) {
     var focused     = $(':focus'),
         textbox     = $("div[role='textbox']:focus"),
         fb          = $("[data-text='true']"),
-        iframe      = $("iframe"),
+        iframe      = $("iframe").not(".preview").not(".fiddle"),
         placeholder = checkForPlaceholder(template),
         caret;
 
