@@ -129,53 +129,44 @@ function replacePlaceholders(template) {
     return template;
 }
 
-function checkEntryPoints(template) {
-    var focused     = $(':focus'),
-        textbox     = $("div[role='textbox']:focus"),
-        fb          = $("[data-text='true']"),
-        iframe      = $("iframe").not(".preview").not(".fiddle"),
-        placeholder = checkForPlaceholder(template),
-        caret;
+function checkEntryPoints(template, el) {
+    if (template) {
+        var iframe      = $("iframe").not(".preview").not(".fiddle"),
+            placeholder = checkForPlaceholder(template),
+            fbTarget    = $("[data-text='true']"),
+            target      = $(el),
+            type        = (target[0]) ? target[0].tagName : '',
+            caret;
 
-    if (fb.length > 0) {
-        // In the works to post on FaceBook
-        //$(fb[0]).replaceWith("<span data-text='true'>"+template+"</span>");
-    }
-
-    if (focused.length > 0) {
-        if (placeholder) {
-            template = replacePlaceholders(template);
-        }
-        caret = getCaret(focused);
-        appendAtCaret(focused, caret, template);
-        //focused.val(template);
-    }
-
-    if (textbox.length > 0) {
-        if (placeholder) {
-            template = replacePlaceholders(template);
-        }
-        caret = getCaret(textbox);
-        appendAtCaret(textbox, caret, markupTemplate(template, 'single'));
-    }
-
-    if (iframe.length > 0) {
-        try {
-            var iframeBody = iframe.contents().find("body")[0];
-
-            if (iframe) {
-                if (placeholder) {
-                    template = replacePlaceholders(template);
-                }
-                caret = getIframeCaret(iframe[0]);
-
-                //var currentValue = $(iframeBody).html() || '';
-                appendAtCaret(iframeBody, caret, markupTemplate(template, 'double'), true);
-                //iframeBody.innerHTML = markupTemplate(template, 'double');
+        if (type === "TEXTAREA") {
+            if (placeholder) {
+                template = replacePlaceholders(template);
             }
-        } catch (err) {
-
+            caret = getCaret(target);
+            appendAtCaret(target, caret, template);
         }
+
+        if (fbTarget) {
+            // TODO
+        }
+
+        if (iframe.length > 0) {
+            try {
+                var iframeBody = iframe.contents().find("body")[0];
+
+                if (iframe) {
+                    if (placeholder) {
+                        template = replacePlaceholders(template);
+                    }
+                    caret = getIframeCaret(iframe[0]);
+
+                    appendAtCaret(iframeBody, caret, markupTemplate(template, 'double'), true);
+                }
+            } catch (err) {
+
+            }
+        }
+
     }
 }
 
@@ -189,10 +180,16 @@ chrome.runtime.onMessage.addListener(
             // There is new Chrome storage option to look into in the future
             getBackgroundData('cliptext', function(value){
                 template = replaceIncludes(value, template);
-                checkEntryPoints(template);
+                checkEntryPoints(template, clickedEl);
             });
         } else {
-            checkEntryPoints(template);
+            checkEntryPoints(template, clickedEl);
         }
     }
 );
+
+var clickedEl = null;
+
+document.addEventListener("mousedown", function(event){
+    clickedEl = event.target;
+}, true);
