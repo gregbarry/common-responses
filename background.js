@@ -112,7 +112,11 @@ var addFromSelectionClick = function(e) {
     }
 };
 
-var contextMenuClick = function(e) {
+var contextMenuClick = function(e, tab) {
+    chrome.tabs.sendMessage(tab.id, "getClickedEl", function(clickedEl) {
+        return true;
+    });
+
     var id = e.menuItemId,
         clipTexts  = getLocalStorage("cliptext"),
         clipId     = getLocalStorage("clipid"),
