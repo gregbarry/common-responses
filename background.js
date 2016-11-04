@@ -5,7 +5,7 @@ function buildMenu(initial) {
         clipCount  = clipTexts.length || 0;
 
     if (initial) {
-        chrome.contextMenus.removeAll()
+        chrome.contextMenus.removeAll();
 
         var root = chrome.contextMenus.create({
             title: 'Common Responses',
