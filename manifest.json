@@ -1,7 +1,7 @@
 {
   "name": "Common Responses",
   "description": "Save common responses and insert them into various form fields.  Ideal for ticket systems and repetitive emails",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "background": {
     "scripts": [
       "resources/js/jquery-3.1.1.min.js",

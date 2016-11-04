@@ -37,14 +37,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 clipCount    = clipTexts.length || 0,
                 responsesRef = $("#responses"),
                 id           = 'clip_' + clipCount,
-                title        = $('#add_title').val(),
-                text         = $('#add_text').val(),
+                addTitle     = $('#add_title'),
+                addText      = $('#add_text'),
+                title        = addTitle.val(),
+                text         = addText.val(),
                 finalId      = chrome.extension.getBackgroundPage().checkId(clipId,id, 'clip_'),
                 finalNum     = finalId.replace('clip_', ''),
                 tab          = $('.second_tier').length - 1;
 
-            $('#add_title').val('');
-            $('#add_text').val('');
+            addTitle.val('');
+            addText.val('');
 
             clipId[finalNum]     = finalId;
             clipTitles[finalNum] = title;
@@ -61,7 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         $('.submit_import').click(function(e) {
-            var text     = decodeURIComponent($('textarea#export_output').val()),
+            var textarea = $('textarea#export_output'),
+                text     = decodeURIComponent(textarea.val()),
                 sections = text.split('||||||||'),
                 stores   = ['clipid','cliptitle','cliptext'],
                 responsesRef = $("#responses");
@@ -71,7 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 localStorage.setItem(value, content.join('||||||'));
             });
 
-            cleanup(responsesRef);
+            textarea.val('');
+
+            cleanup(responsesRef, true);
 
             e.preventDefault();
         });
@@ -131,8 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (clipTitles[i]) {
                     responsesRef.append($('<div>', {
                         class  : 'group second_tier',
-                        id     : clipId[i],
-                        html   : "<h3 id='id_"+i+"' data-order='"+i+"'>" + (i+1) + ". " + clipTitles[i] + "</h3>" +
+                        html   : "<h3 id='id_"+i+"' data-order='"+clipId[i]+"'>" + (i + 1) + ' - ' + clipTitles[i] + "</h3>" +
                         '<div><p><label>Title</label><br><input type="text" id="update_title_' + clipId[i] + '" value="' + clipTitles[i] + '"></p>' +
                         "<p><label>Response</label><br><textarea id='update_text_" + clipId[i] + "'>" + clipTexts[i] + "</textarea></p>" +
                         "<p><input type='submit' class='update_submit' id='update_"+clipId[i]+"' value='update'/>" +
@@ -154,19 +158,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     $( this ).accordion( "refresh" );
                 },
                 update: function () {
-                    $("#responses").find("h3").each(function() {
-                        var id      = $(this).attr('id').replace('id_', ''),
-                            order   = $(this).index('h3') - 1;
+                    var newClipTexts = [],
+                        newClipTitles= [];
 
-                        if (id != order) {
-                            clipTexts  = swap(clipTexts, id, order);
-                            clipTitles = swap(clipTitles, id, order);
-                            return false;
-                        }
+                    $("#responses").find('.second_tier').each(function() {
+                        var title = $(this).find('input').val(),
+                            text  = $(this).find('textarea').val();
+
+                        newClipTitles.push(title);
+                        newClipTexts.push(text);
                     });
 
-                    setLocalStorage("cliptext" ,  clipTexts);
-                    setLocalStorage("cliptitle", clipTitles);
+                    setLocalStorage("cliptext" ,  newClipTexts);
+                    setLocalStorage("cliptitle", newClipTitles);
 
                     cleanup(responsesRef);
                 }
