@@ -17,12 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 clipId       = getLocalStorage("clipid"),
                 responsesRef = $("#responses"),
                 id           = $(this).attr('id').replace('update_', ''),
-                i            = clipId.indexOf(id),
-                title        = $('#update_title_' + id).val(),
-                text         = $('#update_text_'  + id).val();
+                i            = clipId.indexOf(id);
 
-            clipTitles[i] = title;
-            clipTexts[i]  = text;
+            clipTitles[i]    = $('#update_title_' + id).val();
+            clipTexts[i]     = $('#update_text_'  + id).val();
 
             setLocalStorage("cliptext",  clipTexts);
             setLocalStorage("cliptitle", clipTitles);
@@ -61,22 +59,34 @@ document.addEventListener('DOMContentLoaded', function() {
             cleanup(responsesRef, tab);
         });
 
+        function readFile(file, onLoadCallback){
+            var reader = new FileReader();
+            reader.onload = onLoadCallback;
+            reader.readAsText(file);
+        }
 
         $('.submit_import').click(function(e) {
-            var textarea = $('textarea#export_output'),
-                text     = decodeURIComponent(textarea.val()),
-                sections = text.split('||||||||'),
-                stores   = ['clipid','cliptitle','cliptext'],
-                responsesRef = $("#responses");
+            var file         = $('#file-input')[0].files[0],
+                responsesRef = $("#responses"),
+                stores       = ['clipid','cliptitle','cliptext'],
+                text, sections;
 
-            $(stores).each(function(index, value) {
-                var content = jQuery.parseJSON(sections[index]);
-                localStorage.setItem(value, content.join('||||||'));
+            if (!file) {
+                return;
+            }
+
+            readFile(file, function(e) {
+                text = decodeURIComponent(e.target.result);
+
+                sections = text.split('||||||||');
+
+                $(stores).each(function(index, value) {
+                    var content = jQuery.parseJSON(sections[index]);
+                    localStorage.setItem(value, content.join('||||||'));
+                });
+
+                cleanup(responsesRef, true);
             });
-
-            textarea.val('');
-
-            cleanup(responsesRef, true);
 
             e.preventDefault();
         });
@@ -188,13 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 $( "#tabs" ).tabs( "option", "active", 1 );
                 responsesRef.accordion({ active: tab });
             }
-        }
-
-        function swap(array, id, order) {
-            var temp     = array[id];
-            array[id]    = array[order];
-            array[order] = temp;
-            return array;
         }
 
         function getLocalStorage(field) {
